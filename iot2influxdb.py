@@ -1,6 +1,6 @@
-# Author : Tony Cheng <tonycheng@cloudcube.com.tw>
-# Version : 0.0.1
-# License : Apache 2
+# Tony Cheng <tony.pig@gmail.com>
+# Version : 0.0.2
+# Licensed under the Apache License, Version 2.0
 
 import Adafruit_DHT
 import sys
@@ -94,14 +94,13 @@ def check_db_result(client):
 
 if __name__ == '__main__':
     sn = 0
-    hat_result = humidity_and_temperature_read(Adafruit_DHT.AM2302, hat_pin)
-    print hat_result
+    client = connect_db(host=db_host, port=db_port, user=db_user, password=db_password, dbname=db_name)
     if True:
-        client = connect_db(host=db_host, port=db_port, user=db_user, password=db_password, dbname=db_name)
         print "Start : %s" % time.ctime()
         try:
             while True:
                 sn+=1
+                hat_result = humidity_and_temperature_read(Adafruit_DHT.AM2302, hat_pin)
                 hat_write_db(client, db_hat_measurement, hat_result[0], hat_result[1])
                 time.sleep(sleep_time)
         except KeyboardInterrupt:
