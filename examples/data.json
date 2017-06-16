@@ -1,0 +1,13 @@
+{
+ "location": "CloudCube Office",
+ "temperature": "20",
+ "humidity": "50",
+ "pm25": "100",
+ "co2": "100",
+ "timestamp": "1434055562000000000",
+ "attr": {
+ "sensor": "am2302",
+ "device": "rasperberry pi 3",
+ "installer": "Tony"
+ }
+}

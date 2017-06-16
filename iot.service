@@ -1,0 +1,13 @@
+[Unit]
+Description= IoT from Tony's Raspberry Pi3
+After=network.target auditd.service
+
+[Service]
+ExecStart=/usr/bin/python /home/pi/iot-temperature_humidity_sensor/iot2influxdb.py
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+Alias=iot.service
