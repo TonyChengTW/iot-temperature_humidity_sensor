@@ -1,5 +1,7 @@
+#/usr/bin/python
+
 # Tony Cheng <tony.pig@gmail.com>
-# Version : 0.0.2
+# Version : 0.1
 # Licensed under the Apache License, Version 2.0
 
 import Adafruit_DHT
