@@ -103,7 +103,8 @@ if __name__ == '__main__':
             while True:
                 sn+=1
                 hat_result = humidity_and_temperature_read(Adafruit_DHT.AM2302, hat_pin)
-                if hat_result[1] > 3000 :
+                if float(hat_result[1]) > 3000 :
+                    print "enter 3000"
                     time.sleep(8)
                     continue
                 hat_write_db(client, db_hat_measurement, hat_result[0], hat_result[1])
