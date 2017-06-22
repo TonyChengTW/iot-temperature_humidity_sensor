@@ -1,7 +1,7 @@
 #/usr/bin/python
 
 # Tony Cheng <tony.pig@gmail.com>
-# Version : 0.2
+# Version : 0.3
 # Licensed under the Apache License, Version 2.0
 
 import Adafruit_DHT
@@ -23,6 +23,11 @@ db_hat_measurement = 'hat'
 
 sleep_time = 30
 hold_time = 3
+
+abnormal_lu_temperature = 3000
+abnormal_ld_temperature = 7
+abnormal_lu_humidity = 100
+abnormal_ld_humidity = 30
 
 hat_pin = '4'
 
@@ -103,8 +108,10 @@ if __name__ == '__main__':
             while True:
                 sn+=1
                 hat_result = humidity_and_temperature_read(Adafruit_DHT.AM2302, hat_pin)
-                if float(hat_result[1]) > 3000 :
-                    print "enter 3000"
+                if float(hat_result[1]) > abnormal_lu_temperature or \
+                   float(hat_result[1]) < abnormal_ld_temperature or \
+                   float(hat_result[0]) > abnormal_lu_humidity or \
+                   float(hat_result[0]) < abnormal_ld_humidity:
                     time.sleep(8)
                     continue
                 hat_write_db(client, db_hat_measurement, hat_result[0], hat_result[1])
