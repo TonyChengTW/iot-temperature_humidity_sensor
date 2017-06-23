@@ -24,21 +24,21 @@ db_hat_measurement = 'hat'
 sleep_time = 30
 hold_time = 3
 
-abnormal_lu_temperature = 3000
-abnormal_ld_temperature = 7
-abnormal_lu_humidity = 100
-abnormal_ld_humidity = 30
+abnormal_lu_temperature = 3000.0
+abnormal_ld_temperature = 7.0
+abnormal_lu_humidity = 100.0
+abnormal_ld_humidity = 30.0
 
 hat_pin = '4'
 
 def humidity_and_temperature_read(sensor, pin):
     humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
     if humidity is not None and temperature is not None:
-        print('Temp={0:0.1f}*  Humidity={1:0.1f}%'.format(temperature, humidity))
+        print('Reading : Temp={0:0.1f}C  Humidity={1:0.1f}%H'.format(temperature, humidity))
     else:
         temperature = 'N/A'
         humidity = 'N/A'
-    return format(temperature, '.4f'), format(humidity, '.4f')
+    return float(format(temperature, '.4f')), float(format(humidity, '.4f'))
 
 
 def connect_db(host, port, user, password, dbname):
@@ -78,21 +78,24 @@ def hat_write_db(client, measurement_name, temperature, humidity):
             "place": "Compute Desktop",
         },
         "fields": {
-            "temperature": temperature,
-            "humidity": humidity
+            "temperature": float(temperature),
+            "humidity": float(humidity)
         }
     }
     ]
-    print("Write points: {0}".format(json_body))
 
     try:
         client.write_points(json_body)
+        print("Writing points: {0}".format(json_body))
     except InfluxDBServerError as e_influxdbserver_err:
         #pdb.set_trace()
         if '503' in e_influxdbserver_err.message:
             time.sleep(hold_time)
             print("Caught '503 Service Unavailable' exception, need to wait and retry again.....")
             client.write_points(json_body)
+        else:
+            print("Error - Write points: {0}".format(json_body))
+            print("Unknow error")
 
 def check_db_result(client):
     db_count_stmt = 'SELECT COUNT(result) FROM /./'
@@ -108,10 +111,12 @@ if __name__ == '__main__':
             while True:
                 sn+=1
                 hat_result = humidity_and_temperature_read(Adafruit_DHT.AM2302, hat_pin)
-                if float(hat_result[1]) > abnormal_lu_temperature or \
-                   float(hat_result[1]) < abnormal_ld_temperature or \
-                   float(hat_result[0]) > abnormal_lu_humidity or \
-                   float(hat_result[0]) < abnormal_ld_humidity:
+                if hat_result[0] > abnormal_lu_temperature or \
+                   hat_result[0] < abnormal_ld_temperature or \
+                   hat_result[1] > abnormal_lu_humidity or \
+                   hat_result[1] < abnormal_ld_humidity:
+                    print("current humidity: {0:0.1f} < {1:0.1f}".format(hat_result[0], abnormal_ld_humidity))
+                    print("the value is abnormal , re-try again....")
                     time.sleep(8)
                     continue
                 hat_write_db(client, db_hat_measurement, hat_result[0], hat_result[1])
