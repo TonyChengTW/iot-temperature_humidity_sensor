@@ -24,9 +24,9 @@ db_hat_measurement = 'hat'
 sleep_time = 30
 hold_time = 3
 
-abnormal_lu_temperature = 3000.0
+abnormal_lu_temperature = 60.0
 abnormal_ld_temperature = 7.0
-abnormal_lu_humidity = 100.0
+abnormal_lu_humidity = 99.0
 abnormal_ld_humidity = 30.0
 
 hat_pin = '4'
